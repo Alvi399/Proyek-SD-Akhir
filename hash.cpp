@@ -1,15 +1,24 @@
 #include <iostream>
-#include <vector>
 
 class HashTable {
 private:
-    std::vector<std::vector<std::pair<int, int>>> table;
+    std::pair<int, int>** table;
     int size;
 
 public:
     HashTable(int size) {
         this->size = size;
-        table.resize(size);
+        table = new std::pair<int, int>*[size];
+        for (int i = 0; i < size; i++) {
+            table[i] = nullptr;
+        }
+    }
+
+    ~HashTable() {
+        for (int i = 0; i < size; i++) {
+            delete table[i];
+        }
+        delete[] table;
     }
 
     int hashFunction(int key) {
@@ -18,26 +27,43 @@ public:
 
     void insert(int key, int value) {
         int index = hashFunction(key);
-        table[index].push_back(std::make_pair(key, value));
+        if (table[index] == nullptr) {
+            table[index] = new std::pair<int, int>(key, value);
+        } else {
+            std::pair<int, int>* current = table[index];
+            while (current->second != -1 && current->first != key) {
+                index = (index + 1) % size;
+                current = table[index];
+            }
+            delete table[index];
+            table[index] = new std::pair<int, int>(key, value);
+        }
     }
 
     int search(int key) {
         int index = hashFunction(key);
-        for (auto pair : table[index]) {
-            if (pair.first == key) {
-                return pair.second;
+        std::pair<int, int>* current = table[index];
+        while (current != nullptr) {
+            if (current->first == key) {
+                return current->second;
             }
+            index = (index + 1) % size;
+            current = table[index];
         }
         return -1; // Key not found
     }
 
     void remove(int key) {
         int index = hashFunction(key);
-        for (auto it = table[index].begin(); it != table[index].end(); ++it) {
-            if (it->first == key) {
-                table[index].erase(it);
+        std::pair<int, int>* current = table[index];
+        while (current != nullptr) {
+            if (current->first == key) {
+                delete table[index];
+                table[index] = nullptr;
                 break;
             }
+            index = (index + 1) % size;
+            current = table[index];
         }
     }
 };

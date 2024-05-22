@@ -3,18 +3,17 @@
 
 using namespace std;
 
-struct inventarisToko {
+struct inventarisToko { //implementasi struct
     string namaBarang;
     int hargaBarang;
     int stokBarang;
     string kategoriBarang;
-
     inventarisToko() : namaBarang(""), hargaBarang(0), stokBarang(0), kategoriBarang("") {}
     inventarisToko(string nama, int harga, int stok, string kategori)
         : namaBarang(nama), hargaBarang(harga), stokBarang(stok), kategoriBarang(kategori) {}
 };
 
-class manajemenInventarisToko {
+class manajemenInventarisToko { 
 private:
     inventarisToko* table;
     int size;
@@ -35,7 +34,7 @@ public:
     ~manajemenInventarisToko() {
         delete[] table;
     }
-    void insert(string key, inventarisToko value) {
+    void insert(string key, inventarisToko value) { //implementasi hashing - linear probing
         int index = hashFunction(key);
         // Linear probing
         while (table[index].namaBarang != "" && table[index].namaBarang != key) {
@@ -46,7 +45,7 @@ public:
         }
         table[index] = value;
     }
-    inventarisToko search(string key) {
+    inventarisToko search(string key) { //implementasi algorima searching - linear probing
         int index = hashFunction(key);
         // Linear probing
         while (table[index].namaBarang != "" && table[index].namaBarang != key) {
